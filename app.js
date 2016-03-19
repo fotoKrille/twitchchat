@@ -64,7 +64,7 @@ var options = {
         username: process.env.username,
         password: process.env.password
     },
-    channels: [rocess.env.channels]
+    channels: [process.env.channels]
 };
 
 var client = new irc.client(options);
