@@ -1,0 +1,80 @@
+﻿html(lang='en')
+    head
+        meta(charset='utf-8')
+        meta(http-equiv='X-UA-Compatible', content='IE=edge')
+        meta(name='viewport', content='width=device-width, initial-scale=1')
+        // The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags
+        title SM0003
+        // Bootstrap
+        link(href='css/bootstrap.min.css', rel='stylesheet')
+        link(href='css/app.css', rel='stylesheet')
+        // HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries
+        // WARNING: Respond.js doesn't work if you view the page via file://
+        //if lt IE 9
+            script(src='https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js')
+            script(src='https://oss.maxcdn.com/respond/1.4.2/respond.min.js')
+    body
+        block content
+        // jQuery (necessary for Bootstrap's JavaScript plugins)
+        script(src='https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js')
+        // Include all compiled plugins (below), or include individual files as needed
+        script(src='js/bootstrap.min.js')
+        script(src='js/underscore-min.js')
+        script(src='/socket.io/socket.io.js')
+
+        script.
+            function makeImage(name, url) {
+                return "<img alt='" + name + "' title='" + name + "' src='" + url + "' />";
+            }
+            function parseMessage2(message, emotes) {
+                var newMessage = message;
+
+                _.chain(emotes)
+                    .map(function(emote, index) {
+                        var charIndex = _.map(emote, function(chars) {
+                            var indexes = chars.split("-");
+
+                            return {
+                                url: "http://static-cdn.jtvnw.net/emoticons/v1/" + index + "/1.0",
+                                startIndex: parseInt(indexes[0]),
+                                endIndex: parseInt(indexes[1]) + 1
+                            };
+                        });
+
+                        return charIndex;
+                    })
+                    .flatten()
+                    .sortBy(function(item) {
+                        return -1 * item.startIndex;
+                    })
+                    .each(function(emote) {
+                        var emoteName = newMessage.substring(emote.startIndex, emote.endIndex);
+
+                        var leftPart = newMessage.substring(0, emote.startIndex);
+                        var middlePart = makeImage(emoteName, emote.url);
+                        var rightPart = newMessage.substring(emote.endIndex);
+
+                        newMessage = leftPart + middlePart + rightPart;
+                    });
+
+                return newMessage;
+            }
+
+            function color(color){
+                if(color == null || color == ''){
+                    return '#FF0000';
+                } else {
+                    return color;
+                }
+            }
+
+            var socket = io.connect();
+
+            socket.on('chat', function (data) {
+                //console.log(data);
+                $('#chat').append('<div class="chat"><span style="color: ' + color(data.user.color) + ';">' + data.user['display-name'] + '</span>: <span class="chatMessage">' + parseMessage2(data.message, data.user.emotes) + '</span></div>')
+                .children(':last')
+                .delay(20000)
+                .fadeOut(100)
+                .scrollTop($('#chat').scrollHeight);
+            });

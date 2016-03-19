@@ -1,0 +1,17 @@
+﻿body {
+    background-color: #00AB39;
+}
+
+#chat{
+    display:block;
+    width: 254px;
+    height: 477px;
+    overflow:hidden;
+}
+
+.chat{
+    font-family:Arial;
+    font-weight: bold;
+    font-size: 20px;
+    color:#ffffff;
+}
