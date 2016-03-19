@@ -73,8 +73,14 @@ var client = new irc.client(options);
 client.connect();
 
 io.on('connection', function (socket) {
+
     client.on('chat', function (channel, user, message, self) {
         socket.emit('chat', { user: user, message: message });
     });
+
+    client.on("subscription", function (channel, username) {
+        console.log(username);
+    });
+
 });
 
