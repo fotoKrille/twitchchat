@@ -73,7 +73,7 @@
             socket.on('chat', function (data) {
                 //console.log(data);
                 $('#chat').prepend('<div class="chat"><span style="color: ' + color(data.user.color) + ';">' + data.user['display-name'] + '</span>: <span class="chatMessage">' + parseMessage2(data.message, data.user.emotes) + '</span></div>')
-                .children(':first')
+                .children(':last')
                 .delay(20000)
                 .fadeOut(100);
             });
