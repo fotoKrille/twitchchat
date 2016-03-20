@@ -15,7 +15,7 @@ var io = require('socket.io')(server);
 
 var port = process.env.PORT || 3000;
 
-var effects = process.env.effects.split(","):
+var effects = process.env.effects.split(",");
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
