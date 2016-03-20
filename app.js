@@ -6,10 +6,14 @@ var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 var irc = require("tmi.js");
 var http = require('http');
+var toHex = require('colornames');
+var request = require('request');
 
 var app = express();
 var server = require('http').createServer(app);
 var io = require('socket.io')(server);
+
+var port = process.env.PORT || 3000;
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
@@ -57,7 +61,7 @@ app.use(function (err, req, res, next) {
     });
 });
 
-server.listen(process.env.PORT);
+server.listen(port);
 
 var options = {
     identity: {
@@ -68,19 +72,55 @@ var options = {
 };
 
 var client = new irc.client(options);
-
 // Connect the client to the server..
 client.connect();
 
+function hexToRgb(hex) {
+    // Expand shorthand form (e.g. "03F") to full form (e.g. "0033FF")
+    var shorthandRegex = /^#?([a-f\d])([a-f\d])([a-f\d])$/i;
+    hex = hex.replace(shorthandRegex, function(m, r, g, b) {
+        return r + r + g + g + b + b;
+    });
+
+    var result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+    return result ? {
+        r: parseInt(result[1], 16),
+        g: parseInt(result[2], 16),
+        b: parseInt(result[3], 16)
+    } : null;
+}
+
+client.on('chat', function (channel, user, message, self) {
+    var msg = message.toLowerCase();
+    var args = msg.split(" ");
+
+    if(msg.indexOf("!led") === 0){
+        if(typeof(args[1]) != null && args[1].trim() !== '' ){
+            var hex = toHex(args[1].trim());
+            if(hex != null){
+            request.post({url:'https://api.particle.io/v1/devices/' + process.env.devices + '/setColor', form: {access_token: process.env.access_token, arg: hex}}, function(err,httpResponse,body){
+                if(err){
+                    console.log(err);
+                }
+            })
+            }else{
+                client.say(process.env.channels, "Sorry i don´t have the color " + args[1].trim());
+            }
+        }
+    }
+});
+
+client.on("subscription", function (channel, username) {
+    console.log(username);
+});
+
 io.on('connection', function (socket) {
-
     client.on('chat', function (channel, user, message, self) {
-        socket.emit('chat', { user: user, message: message });
-    });
+        var msg = message.toLowerCase();
 
-    client.on("subscription", function (channel, username) {
-        console.log(username);
+        if(msg.indexOf("!led") !== 0){
+            socket.emit('chat', { user: user, message: message });
+        }
     });
-
 });
 
