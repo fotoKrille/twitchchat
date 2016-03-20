@@ -107,7 +107,7 @@ client.on('chat', function (channel, user, message, self) {
                 }
             });
         }else{
-            if(typeof(args[1]) != null && args[1].trim() !== '' ){
+            if(args[1] != null && args[1].trim() !== ''){
                 var hex = toHex(args[1].trim());
                 if(hex != null){
                     request.post({url:'https://api.particle.io/v1/devices/' + process.env.devices + '/setColor', form: {access_token: process.env.access_token, arg: hex}}, function(err,httpResponse,body){
