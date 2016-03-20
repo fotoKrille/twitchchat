@@ -97,11 +97,8 @@ client.on('chat', function (channel, user, message, self) {
     var args = msg.split(" ");
 
     if(msg.indexOf("!led") === 0){
-        console.log(effects.indexOf(args[1]));
-
         if(effects.indexOf(args[1]) >= 0){
-            console.log(args[1]);
-            request.post({url:'https://api.particle.io/v1/devices/' + process.env.devices + '/color', form: {access_token: process.env.access_token, arg: args[1]}}, function(err,httpResponse,body){
+            request.post({url:'https://api.particle.io/v1/devices/' + process.env.devices + '/color', form: {access_token: process.env.access_token, arg: args[1].toLowerCase()}}, function(err,httpResponse,body){
                 if(err){
                     console.log(err);
                 }
@@ -116,6 +113,7 @@ client.on('chat', function (channel, user, message, self) {
                         }
                     });
                 }else{
+                    console.log(msg);
                     client.say(process.env.channels, "Sorry i don´t have the color " + args[1].trim());
                 }
             }
