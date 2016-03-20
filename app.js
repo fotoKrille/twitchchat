@@ -15,7 +15,7 @@ var io = require('socket.io')(server);
 
 var port = process.env.PORT || 3000;
 
-var effects = ["fire", "rainbow", "followalert", "donation"];
+var effects = process.env.effects.split(","):
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
@@ -116,7 +116,6 @@ client.on('chat', function (channel, user, message, self) {
                         }
                     });
                 }else{
-                    console.log("VAFAN!");
                     client.say(process.env.channels, "Sorry i don´t have the color " + args[1].trim());
                 }
             }
