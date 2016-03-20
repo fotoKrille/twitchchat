@@ -132,7 +132,7 @@ io.on('connection', function (socket) {
     client.on('chat', function (channel, user, message, self) {
         var msg = message.toLowerCase();
 
-        if(msg.indexOf("!led") !== 0 || msg.indexOf("sorry i don´t have the color") == -1){
+        if(msg.indexOf("!led") !== 0 && msg.indexOf("sorry i don´t have the color") == -1){
             socket.emit('chat', { user: user, message: message });
         }
     });
