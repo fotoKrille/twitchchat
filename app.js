@@ -15,6 +15,8 @@ var io = require('socket.io')(server);
 
 var port = process.env.PORT || 3000;
 
+var effects = ["fire", "rainbow", "followalert", "donation"];
+
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'jade');
@@ -95,16 +97,28 @@ client.on('chat', function (channel, user, message, self) {
     var args = msg.split(" ");
 
     if(msg.indexOf("!led") === 0){
-        if(typeof(args[1]) != null && args[1].trim() !== '' ){
-            var hex = toHex(args[1].trim());
-            if(hex != null){
-            request.post({url:'https://api.particle.io/v1/devices/' + process.env.devices + '/setColor', form: {access_token: process.env.access_token, arg: hex}}, function(err,httpResponse,body){
+        console.log(effects.indexOf(args[1]));
+
+        if(effects.indexOf(args[1]) >= 0){
+            console.log(args[1]);
+            request.post({url:'https://api.particle.io/v1/devices/' + process.env.devices + '/color', form: {access_token: process.env.access_token, arg: args[1]}}, function(err,httpResponse,body){
                 if(err){
                     console.log(err);
                 }
-            })
-            }else{
-                client.say(process.env.channels, "Sorry i don´t have the color " + args[1].trim());
+            });
+        }else{
+            if(typeof(args[1]) != null && args[1].trim() !== '' ){
+                var hex = toHex(args[1].trim());
+                if(hex != null){
+                    request.post({url:'https://api.particle.io/v1/devices/' + process.env.devices + '/setColor', form: {access_token: process.env.access_token, arg: hex}}, function(err,httpResponse,body){
+                        if(err){
+                            console.log(err);
+                        }
+                    });
+                }else{
+                    console.log("VAFAN!");
+                    client.say(process.env.channels, "Sorry i don´t have the color " + args[1].trim());
+                }
             }
         }
     }
