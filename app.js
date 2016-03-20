@@ -17,6 +17,9 @@ var port = process.env.PORT || 3000;
 
 var effects = process.env.effects.split(",");
 
+
+console.log(effects);
+
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'jade');
