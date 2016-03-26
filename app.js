@@ -69,16 +69,36 @@ app.use(function (err, req, res, next) {
 server.listen(port);
 
 var options = {
+     options: {
+        debug: true
+    },
+    connection: {
+        cluster: "chat",
+        reconnect: true
+    },
     identity: {
         username: process.env.username,
         password: process.env.password
     },
-    channels: [process.env.channels]
+    channels: ["#" + process.env.channels]
 };
 
 var client = new irc.client(options);
 // Connect the client to the server..
 client.connect();
+
+client.on("connecting", function (address, port) {
+    console.log("connecting");
+    console.log(address, port);
+});
+client.on("connected", function (address, port) {
+    console.log("connected");
+    console.log(address, port);
+});
+client.on("disconnected", function (reason) {
+    console.log("disconnected");
+    console.log(reason);
+});
 
 function hexToRgb(hex) {
     // Expand shorthand form (e.g. "03F") to full form (e.g. "0033FF")
@@ -96,9 +116,11 @@ function hexToRgb(hex) {
 }
 
 client.on('chat', function (channel, user, message, self) {
+
+    console.log(channel, user, message, self);
     var msg = message.toLowerCase();
     var args = msg.split(" ");
-
+    
     if(msg.indexOf("!led") === 0){
         if(effects.indexOf(args[1]) >= 0){
             request.post({url:'https://api.particle.io/v1/devices/' + process.env.devices + '/color', form: {access_token: process.env.access_token, arg: args[1].toLowerCase()}}, function(err,httpResponse,body){
