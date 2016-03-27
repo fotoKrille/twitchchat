@@ -73,7 +73,7 @@ var options = {
         debug: true
     },
     connection: {
-        cluster: "chat",
+        cluster: "aws",
         reconnect: true
     },
     identity: {
@@ -86,19 +86,6 @@ var options = {
 var client = new irc.client(options);
 // Connect the client to the server..
 client.connect();
-
-client.on("connecting", function (address, port) {
-    console.log("connecting");
-    console.log(address, port);
-});
-client.on("connected", function (address, port) {
-    console.log("connected");
-    console.log(address, port);
-});
-client.on("disconnected", function (reason) {
-    console.log("disconnected");
-    console.log(reason);
-});
 
 function hexToRgb(hex) {
     // Expand shorthand form (e.g. "03F") to full form (e.g. "0033FF")
