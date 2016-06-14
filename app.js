@@ -40,8 +40,9 @@ var statsAMMO = 0;
 app.post('/csgo', function (req, res) {
     if(req.body.hasOwnProperty("player") && req.body.player.hasOwnProperty("state")){
         if(statsHP != req.body.player.state.health){
+            
             statsHP = req.body.player.state.health;
-            console.log("health", req.body.player.state.health);
+
             request.post({url:'https://api.particle.io/v1/devices/' + process.env.devices + '/setHP', form: {access_token: process.env.access_token, arg: req.body.player.state.health}}, function(err,httpResponse,body){
                 if(err){
                     console.log(err);
