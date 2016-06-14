@@ -38,38 +38,8 @@ app.get('/', function (req, res) {
 var statsHP = 0;
 var statsAMMO = 0;
 app.post('/csgo', function (req, res) {
-    if(req.body.hasOwnProperty("player") && req.body.player.hasOwnProperty("state")){
-        if(statsHP <> req.body.player.state.health){
-            statsHP = req.body.player.state.health;
-            request.post({url:'https://api.particle.io/v1/devices/' + process.env.devices + '/setHP', form: {access_token: process.env.access_token, arg: req.body.player.state.health}}, function(err,httpResponse,body){
-                if(err){
-                    console.log(err);
-                }
-                console.log("health", req.body.player.state.health);
-            });
-        }
-    }
-    /*
-    if(req.body.player.hasOwnProperty("weapons")){
-        //console.log(req.body.player.weapons);
-        var weapons = _.where(req.body.player.weapons, {state: "active"});
 
-        var p = 0;
 
-        if(weapons[0].hasOwnProperty("ammo_clip")){
-            var p = (weapons[0].ammo_clip / weapons[0].ammo_clip_max ) * 100;
-            if(statsAMMO <> p){
-                statsAMMO = p;
-                request.post({url:'https://api.particle.io/v1/devices/' + process.env.devices + '/setAMMO', form: {access_token: process.env.access_token, arg: p.toFixed(0)}}, function(err,httpResponse,body){
-                    if(err){
-                        console.log(err);
-                    }
-                    console.log("HP", p.toFixed(0));
-                });
-            }
-        }
-    }
-    */
     res.render('index', { title: 'Express' });
 });
 
@@ -182,3 +152,24 @@ io.on('connection', function (socket) {
     });
 });
 
+    /*
+    if(req.body.player.hasOwnProperty("weapons")){
+        //console.log(req.body.player.weapons);
+        var weapons = _.where(req.body.player.weapons, {state: "active"});
+
+        var p = 0;
+
+        if(weapons[0].hasOwnProperty("ammo_clip")){
+            var p = (weapons[0].ammo_clip / weapons[0].ammo_clip_max ) * 100;
+            if(statsAMMO <> p){
+                statsAMMO = p;
+                request.post({url:'https://api.particle.io/v1/devices/' + process.env.devices + '/setAMMO', form: {access_token: process.env.access_token, arg: p.toFixed(0)}}, function(err,httpResponse,body){
+                    if(err){
+                        console.log(err);
+                    }
+                    console.log("HP", p.toFixed(0));
+                });
+            }
+        }
+    }
+    */
