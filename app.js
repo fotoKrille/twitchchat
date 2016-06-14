@@ -156,7 +156,7 @@ client.on('chat', function (channel, user, message, self) {
                         }
                     });
                 }else{
-                    console.log(msg);
+                    //console.log(msg);
                     client.say(process.env.channels, "Sorry i don´t have the color " + args[1].trim());
                 }
             }
@@ -165,7 +165,7 @@ client.on('chat', function (channel, user, message, self) {
 });
 
 client.on("subscription", function (channel, username) {
-    console.log(username);
+    //console.log(username);
 });
 
 io.on('connection', function (socket) {
