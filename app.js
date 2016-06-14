@@ -38,7 +38,7 @@ app.get('/', function (req, res) {
 var statsHP = 0;
 var statsAMMO = 0;
 app.post('/csgo', function (req, res) {
-    if(req.body.player.hasOwnProperty("state")){
+    if(req.body.hasOwnProperty("player") && req.body.player.hasOwnProperty("state")){
         if(statsHP <> req.body.player.state.health){
             statsHP = req.body.player.state.health;
             request.post({url:'https://api.particle.io/v1/devices/' + process.env.devices + '/setHP', form: {access_token: process.env.access_token, arg: req.body.player.state.health}}, function(err,httpResponse,body){
@@ -49,7 +49,7 @@ app.post('/csgo', function (req, res) {
             });
         }
     }
-
+    /*
     if(req.body.player.hasOwnProperty("weapons")){
         //console.log(req.body.player.weapons);
         var weapons = _.where(req.body.player.weapons, {state: "active"});
@@ -69,6 +69,7 @@ app.post('/csgo', function (req, res) {
             }
         }
     }
+    */
     res.render('index', { title: 'Express' });
 });
 
