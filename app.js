@@ -38,7 +38,13 @@ app.get('/', function (req, res) {
 var statsHP = 0;
 var statsAMMO = 0;
 app.post('/csgo', function (req, res) {
+    if(req.body.hasOwnProperty("player") && req.body.player.hasOwnProperty("state")){
+        if(statsHP <> req.body.player.state.health){
+            statsHP = req.body.player.state.health;
+            console.log("health", req.body.player.state.health);
 
+        }
+    }
 
     res.render('index', { title: 'Express' });
 });
