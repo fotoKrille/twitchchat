@@ -36,21 +36,34 @@ app.get('/', function (req, res) {
 });
 
 app.post('/csgo', function (req, res) {
-    res.writeHead(200, {'Content-Type': 'text/html'});
+    //res.writeHead(200, {'Content-Type': 'text/html'});
     res.end('OK');
-    request.post({url:'https://api.particle.io/v1/devices/' + process.env.devices + '/setHP', form: {access_token: process.env.access_token, arg: req.body.player.state.health}}, function(err,httpResponse,body){
-        if(err){
-            console.log(err);
-        }
-    });
-    console.log(req.body.player.state.health);
-    /*
 
-    if(req.body.round.hasOwnProperty("bomb")){
-        console.log(req.body.round.bomb);
+    if(req.body.player.hasOwnProperty("state")){
+        request.post({url:'https://api.particle.io/v1/devices/' + process.env.devices + '/setHP', form: {access_token: process.env.access_token, arg: req.body.player.state.health}}, function(err,httpResponse,body){
+            if(err){
+                console.log(err);
+            }
+            console.log(req.body.player.state.health);
+        });
     }
-    */
-    
+
+    if(req.body.player.hasOwnProperty("weapons")){
+        //console.log(req.body.player.weapons);
+        var weapons = _.where(req.body.player.weapons, {state: "active"});
+
+        var p = 0;
+
+        if(weapons[0].hasOwnProperty("ammo_clip")){
+            var p = (weapons[0].ammo_clip / weapons[0].ammo_clip_max ) *100;
+            request.post({url:'https://api.particle.io/v1/devices/' + process.env.devices + '/setAMMO', form: {access_token: process.env.access_token, arg: p.toFixed(0)}}, function(err,httpResponse,body){
+                if(err){
+                    console.log(err);
+                }
+                console.log(p.toFixed(0));
+            });
+        }
+    }
 });
 
 // catch 404 and forward to error handler
