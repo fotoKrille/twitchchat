@@ -18,7 +18,7 @@ var port = process.env.PORT || 3000;
 var effects = process.env.effects.split(",");
 
 
-console.log(effects);
+console.log(port, effects);
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
@@ -32,19 +32,16 @@ app.use(require('stylus').middleware(path.join(__dirname, 'public')));
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.get('/', function (req, res) {
-    res.render('index', { title: 'Express' });
+    
 });
 
 app.post('/csgo', function (req, res) {
-    //res.writeHead(200, {'Content-Type': 'text/html'});
-    res.end('OK');
-
     if(req.body.player.hasOwnProperty("state")){
         request.post({url:'https://api.particle.io/v1/devices/' + process.env.devices + '/setHP', form: {access_token: process.env.access_token, arg: req.body.player.state.health}}, function(err,httpResponse,body){
             if(err){
                 console.log(err);
             }
-            console.log(req.body.player.state.health);
+            console.log("health", req.body.player.state.health);
         });
     }
 
@@ -55,15 +52,16 @@ app.post('/csgo', function (req, res) {
         var p = 0;
 
         if(weapons[0].hasOwnProperty("ammo_clip")){
-            var p = (weapons[0].ammo_clip / weapons[0].ammo_clip_max ) *100;
+            var p = (weapons[0].ammo_clip / weapons[0].ammo_clip_max ) * 100;
             request.post({url:'https://api.particle.io/v1/devices/' + process.env.devices + '/setAMMO', form: {access_token: process.env.access_token, arg: p.toFixed(0)}}, function(err,httpResponse,body){
                 if(err){
                     console.log(err);
                 }
-                console.log(p.toFixed(0));
+                console.log("HP", p.toFixed(0));
             });
         }
     }
+    res.render('index', { title: 'Express' });
 });
 
 // catch 404 and forward to error handler
@@ -134,8 +132,6 @@ function hexToRgb(hex) {
 }
 
 client.on('chat', function (channel, user, message, self) {
-
-    console.log(channel, user, message, self);
     var msg = message.toLowerCase();
     var args = msg.split(" ");
     
@@ -156,7 +152,6 @@ client.on('chat', function (channel, user, message, self) {
                         }
                     });
                 }else{
-                    //console.log(msg);
                     client.say(process.env.channels, "Sorry i don´t have the color " + args[1].trim());
                 }
             }
