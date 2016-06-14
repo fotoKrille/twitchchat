@@ -35,6 +35,24 @@ app.get('/', function (req, res) {
     res.render('index', { title: 'Express' });
 });
 
+app.post('/csgo', function (req, res) {
+    res.writeHead(200, {'Content-Type': 'text/html'});
+    res.end('OK');
+    request.post({url:'https://api.particle.io/v1/devices/' + process.env.devices + '/setHP', form: {access_token: process.env.access_token, arg: req.body.player.state.health}}, function(err,httpResponse,body){
+        if(err){
+            console.log(err);
+        }
+    });
+    console.log(req.body.player.state.health);
+    /*
+
+    if(req.body.round.hasOwnProperty("bomb")){
+        console.log(req.body.round.bomb);
+    }
+    */
+    
+});
+
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
     var err = new Error('Not Found');
