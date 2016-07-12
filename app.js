@@ -137,11 +137,30 @@ client.on('chat', function (channel, user, message, self) {
             if(args[1] != null && args[1].trim() !== ''){
                 var hex = toHex(args[1].trim());
                 if(hex != null){
+                    var options = {
+                        uri: process.env.facecandy,
+                        method: "POST",
+                        headers: {
+                            "content-type": "application/json",
+                        },
+                        json: {
+                            "command": "solid",
+                            "value": "#" + hex
+                        }
+                    };
+
+                    request(options, function (error, response, body) {
+                        if(error){
+                            console.log(err);
+                        }
+                    });
+
                     request.post({url:'https://api.particle.io/v1/devices/' + process.env.devices + '/setColor', form: {access_token: process.env.access_token, arg: hex}}, function(err,httpResponse,body){
                         if(err){
                             console.log(err);
                         }
                     });
+
                 }else{
                     client.say(process.env.channels, "Sorry i don´t have the color " + args[1].trim());
                 }
